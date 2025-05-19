@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Happy Birthday Gamze</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('https://en.idei.club/uploads/posts/2023-06/1686343952_en-idei-club-p-pink-star-background-dizain-krasivo-1.png') no-repeat center center fixed;
+      background-size: cover;
+      overflow: hidden;
+      font-family: 'Comic Sans MS', cursive;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 30px;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 5px #ff1493;
+    }
+
+    #message {
+      position: absolute;
+      top: 200px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 1.5em;
+      display: none;
+    }
+
+    .cake {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .layer {
+      height: 80px;
+      background: #fff0f5;
+      border-radius: 10px;
+      position: relative;
+      box-shadow: 0 4px 0 #e75480;
+      margin: 0 auto;
+    }
+
+    .layer:nth-child(1) { width: 300px; z-index: 3; }
+    .layer:nth-child(2) { width: 220px; margin-top: -60px; z-index: 2; }
+    .layer:nth-child(3) { width: 150px; margin-top: -60px; z-index: 1; }
+
+
+
+.candle {
+  width: 6px;
+  height: 20px;
+  position: absolute;
+  bottom: 80px;
+  /* animation: flicker 1s infinite;  <-- BU SATIRI KALDIRIYORUZ */
+}
+
+
+.flame {
+  width: 8px;
+  height: 12px;
+  background: yellow;
+  border-radius: 50%;
+  position: absolute;
+  top: -12px;
+  left: -1px;
+  box-shadow: 0 0 15px yellow;
+  animation: flicker 1s infinite;
+}
+
+
+    @keyframes flicker {
+      0% { transform: scaleY(1); }
+      50% { transform: scaleY(1.2); }
+      100% { transform: scaleY(1); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎂 Bir dilek tut ve mumları üfle 🎂</h1>
+  <div id="message">✨ Dileğin gerçek olacak... İyi ki Doğdun Canım Aşkımm! ✨</div>
+  <div class="cake">
+    <div class="layer" id="top-layer"></div>
+    <div class="layer"></div>
+    <div class="layer"></div>
+  </div>
+
+  <audio id="birthday-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+  <script>
+    const topLayer = document.getElementById('top-layer');
+    for (let i = 0; i < 31; i++) {
+      let candle = document.createElement('div');
+      candle.className = 'candle';
+      candle.style.left = (5 + i * 9) + 'px';
+      candle.style.background = `hsl(${i * 10}, 80%, 60%)`;
+
+      let flame = document.createElement('div');
+      flame.className = 'flame';
+      candle.appendChild(flame);
+      topLayer.appendChild(candle);
+    }
+
+    const audio = document.getElementById('birthday-audio');
+    const flames = document.querySelectorAll('.flame');
+    const message = document.getElementById('message');
+
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const mic = audioContext.createMediaStreamSource(stream);
+      const analyser = audioContext.createAnalyser();
+      mic.connect(analyser);
+      analyser.fftSize = 256;
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      let flameOut = false;
+
+      function detectBlow() {
+        analyser.getByteFrequencyData(dataArray);
+        let volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
+        if (volume > 40 && !flameOut) {
+          flameOut = true;
+          flames.forEach(f => f.style.display = 'none');
+          message.style.display = 'block';
+          audio.play();
+        } else {
+          requestAnimationFrame(detectBlow);
+        }
+      }
+
+      detectBlow();
+    }).catch(err => {
+      alert("Mikrofon izni verilmedi. Lütfen sayfayı yenileyip izin ver.");
+    });
+  </script>
+</body>
+</html>
