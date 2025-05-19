@@ -94,7 +94,8 @@
     <div class="layer"></div>
   </div>
 
-  <audio id="birthday-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+  <audio id="birthday-audio" src="https://assets.mixkit.co/music/preview/mixkit-happy-birthday-to-you-1091.mp3"></audio>
+
 
   <script>
     const topLayer = document.getElementById('top-layer');
@@ -127,10 +128,11 @@
       function detectBlow() {
         analyser.getByteFrequencyData(dataArray);
         let volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
-        if (volume > 20 && !flameOut) {
+        if (volume > 50 && !flameOut) {
           flameOut = true;
           flames.forEach(f => f.style.display = 'none');
           message.style.display = 'block';
+          audio.volume = 0.5;
           audio.play();
         } else {
           requestAnimationFrame(detectBlow);
