@@ -96,13 +96,17 @@
 
   <audio id="birthday-audio" src="https://cdn.pixabay.com/audio/2023/07/07/audio_6d51c5e16c.mp3"></audio>
 
-
   <script>
     const topLayer = document.getElementById('top-layer');
+
+    // Merkeze ortalamak için sola kaydırmayı düzeltiyoruz
+    const cakeWidth = 80; // yüzdelik (%vw)
+    const candleSpacing = cakeWidth / 31;
+
     for (let i = 0; i < 31; i++) {
       let candle = document.createElement('div');
       candle.className = 'candle';
-      candle.style.left = (5 + i * 2.5) + 'vw';
+      candle.style.left = `calc(${candleSpacing * i}vw)`;
       candle.style.background = `hsl(${i * 10}, 80%, 60%)`;
 
       let flame = document.createElement('div');
@@ -128,11 +132,11 @@
       function detectBlow() {
         analyser.getByteFrequencyData(dataArray);
         let volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
-        if (volume > 50 && !flameOut) {
+        if (volume > 20 && !flameOut) {
           flameOut = true;
           flames.forEach(f => f.style.display = 'none');
           message.style.display = 'block';
-          audio.volume = 1;
+          audio.volume = 0.5;
           audio.play();
         } else {
           requestAnimationFrame(detectBlow);
@@ -141,8 +145,10 @@
 
       detectBlow();
     }).catch(err => {
-      alert("Mikrofon izni verilmedi. Lütfen sayfayı yenileyip izin ver.");
+      alert("Mikrofon izni verilmedi. Lütfen sayfayı yenileyip tekrar deneyin.");
     });
   </script>
 </body>
 </html>
+
+
